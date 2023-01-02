@@ -15,10 +15,9 @@ node('') {
 		archiveArtifacts artifacts: 'target/*.war'
 	}
 	stage ('Notification'){
-		emailext (
-		      subject: "Job Completed",
-		      body: "Jenkins Pipeline Job for Maven Build got completed !!!",
-		      to: "tikoovinay7@gmail.com"
-		    )
+		emailext attachLog: true, attachmentsPattern: 'target/surefire-reports/*.xml', 
+			 body: '''$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:
+	Check console output at $BUILD_URL to view the results.''', 
+			compressLog: true, recipientProviders: [buildUser(), requestor()], subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', to: 'tikoovinay7@gmail.com'
 	}
 }
